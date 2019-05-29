@@ -1,0 +1,44 @@
+{
+    "name": "Images",
+    "fields": [
+        {
+            "fieldName": "imageURL",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "imageType",
+            "fieldType": "ImageType",
+            "fieldValues": "POST,PRODUCT,GARDEN",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipName": "nGUser",
+            "otherEntityName": "nGUser",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "post",
+            "otherEntityName": "post",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190529033922",
+    "entityTableName": "images",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "beApp",
+    "applications": "*",
+    "microserviceName": "beApp"
+}
