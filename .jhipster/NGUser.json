@@ -1,0 +1,76 @@
+{
+    "name": "NGUser",
+    "fields": [
+        {
+            "fieldName": "phoneNumber",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "firstName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "lastName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "vegetationType",
+            "fieldType": "VegetationType",
+            "fieldValues": "ORGANIC,NONORGANIC,BOTH"
+        },
+        {
+            "fieldName": "gardenDescription",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "Status",
+            "fieldValues": "INVITED,CONFIRMED,DENIED"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "location",
+            "otherEntityRelationshipName": "nGUser",
+            "relationshipName": "location",
+            "otherEntityField": "id",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "deviceDetails",
+            "otherEntityRelationshipName": "nGUser",
+            "relationshipName": "devices"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "images",
+            "otherEntityRelationshipName": "nGUser",
+            "relationshipName": "gardenImage"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "post",
+            "otherEntityRelationshipName": "nGUser",
+            "relationshipName": "posts"
+        }
+    ],
+    "changelogDate": "20190529033920",
+    "entityTableName": "ng_user",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "beApp",
+    "applications": "*",
+    "microserviceName": "beApp"
+}
