@@ -6,7 +6,9 @@ entity NGUser {
     vegetationType VegetationType,
     gardenDescription String,
     email String,
-    status Status
+    status Status,
+    oneTimeCode String,
+    oneTimeExpirationTime ZonedDateTime
 }
 
 enum Status {
