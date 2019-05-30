@@ -19,9 +19,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
 
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
+import static com.neighborhood.beapp.web.rest.TestUtil.sameInstant;
 import static com.neighborhood.beapp.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -58,6 +63,12 @@ public class NGUserResourceIT {
 
     private static final Status DEFAULT_STATUS = Status.INVITED;
     private static final Status UPDATED_STATUS = Status.CONFIRMED;
+
+    private static final String DEFAULT_ONE_TIME_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ONE_TIME_CODE = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_ONE_TIME_EXPIRATION_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_ONE_TIME_EXPIRATION_TIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private NGUserRepository nGUserRepository;
@@ -112,7 +123,9 @@ public class NGUserResourceIT {
             .vegetationType(DEFAULT_VEGETATION_TYPE)
             .gardenDescription(DEFAULT_GARDEN_DESCRIPTION)
             .email(DEFAULT_EMAIL)
-            .status(DEFAULT_STATUS);
+            .status(DEFAULT_STATUS)
+            .oneTimeCode(DEFAULT_ONE_TIME_CODE)
+            .oneTimeExpirationTime(DEFAULT_ONE_TIME_EXPIRATION_TIME);
         return nGUser;
     }
     /**
@@ -129,7 +142,9 @@ public class NGUserResourceIT {
             .vegetationType(UPDATED_VEGETATION_TYPE)
             .gardenDescription(UPDATED_GARDEN_DESCRIPTION)
             .email(UPDATED_EMAIL)
-            .status(UPDATED_STATUS);
+            .status(UPDATED_STATUS)
+            .oneTimeCode(UPDATED_ONE_TIME_CODE)
+            .oneTimeExpirationTime(UPDATED_ONE_TIME_EXPIRATION_TIME);
         return nGUser;
     }
 
@@ -160,6 +175,8 @@ public class NGUserResourceIT {
         assertThat(testNGUser.getGardenDescription()).isEqualTo(DEFAULT_GARDEN_DESCRIPTION);
         assertThat(testNGUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testNGUser.getStatus()).isEqualTo(DEFAULT_STATUS);
+        assertThat(testNGUser.getOneTimeCode()).isEqualTo(DEFAULT_ONE_TIME_CODE);
+        assertThat(testNGUser.getOneTimeExpirationTime()).isEqualTo(DEFAULT_ONE_TIME_EXPIRATION_TIME);
 
         // Validate the NGUser in Elasticsearch
         verify(mockNGUserSearchRepository, times(1)).save(testNGUser);
@@ -220,7 +237,9 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.[*].vegetationType").value(hasItem(DEFAULT_VEGETATION_TYPE.toString())))
             .andExpect(jsonPath("$.[*].gardenDescription").value(hasItem(DEFAULT_GARDEN_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].oneTimeCode").value(hasItem(DEFAULT_ONE_TIME_CODE.toString())))
+            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME))));
     }
     
     @Test
@@ -239,7 +258,9 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.vegetationType").value(DEFAULT_VEGETATION_TYPE.toString()))
             .andExpect(jsonPath("$.gardenDescription").value(DEFAULT_GARDEN_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+            .andExpect(jsonPath("$.oneTimeCode").value(DEFAULT_ONE_TIME_CODE.toString()))
+            .andExpect(jsonPath("$.oneTimeExpirationTime").value(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME)));
     }
 
     @Test
@@ -265,7 +286,9 @@ public class NGUserResourceIT {
             .vegetationType(UPDATED_VEGETATION_TYPE)
             .gardenDescription(UPDATED_GARDEN_DESCRIPTION)
             .email(UPDATED_EMAIL)
-            .status(UPDATED_STATUS);
+            .status(UPDATED_STATUS)
+            .oneTimeCode(UPDATED_ONE_TIME_CODE)
+            .oneTimeExpirationTime(UPDATED_ONE_TIME_EXPIRATION_TIME);
 
         restNGUserMockMvc.perform(put("/api/ng-users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -283,6 +306,8 @@ public class NGUserResourceIT {
         assertThat(testNGUser.getGardenDescription()).isEqualTo(UPDATED_GARDEN_DESCRIPTION);
         assertThat(testNGUser.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testNGUser.getStatus()).isEqualTo(UPDATED_STATUS);
+        assertThat(testNGUser.getOneTimeCode()).isEqualTo(UPDATED_ONE_TIME_CODE);
+        assertThat(testNGUser.getOneTimeExpirationTime()).isEqualTo(UPDATED_ONE_TIME_EXPIRATION_TIME);
 
         // Validate the NGUser in Elasticsearch
         verify(mockNGUserSearchRepository, times(1)).save(testNGUser);
@@ -345,7 +370,9 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.[*].vegetationType").value(hasItem(DEFAULT_VEGETATION_TYPE.toString())))
             .andExpect(jsonPath("$.[*].gardenDescription").value(hasItem(DEFAULT_GARDEN_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].oneTimeCode").value(hasItem(DEFAULT_ONE_TIME_CODE)))
+            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME))));
     }
 
     @Test

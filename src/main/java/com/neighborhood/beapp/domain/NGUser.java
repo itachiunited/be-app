@@ -10,6 +10,7 @@ import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -52,6 +53,12 @@ public class NGUser implements Serializable {
 
     @Field("status")
     private Status status;
+
+    @Field("one_time_code")
+    private String oneTimeCode;
+
+    @Field("one_time_expiration_time")
+    private ZonedDateTime oneTimeExpirationTime;
 
     @DBRef
     @Field("location")
@@ -167,6 +174,32 @@ public class NGUser implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getOneTimeCode() {
+        return oneTimeCode;
+    }
+
+    public NGUser oneTimeCode(String oneTimeCode) {
+        this.oneTimeCode = oneTimeCode;
+        return this;
+    }
+
+    public void setOneTimeCode(String oneTimeCode) {
+        this.oneTimeCode = oneTimeCode;
+    }
+
+    public ZonedDateTime getOneTimeExpirationTime() {
+        return oneTimeExpirationTime;
+    }
+
+    public NGUser oneTimeExpirationTime(ZonedDateTime oneTimeExpirationTime) {
+        this.oneTimeExpirationTime = oneTimeExpirationTime;
+        return this;
+    }
+
+    public void setOneTimeExpirationTime(ZonedDateTime oneTimeExpirationTime) {
+        this.oneTimeExpirationTime = oneTimeExpirationTime;
     }
 
     public Location getLocation() {
@@ -285,6 +318,8 @@ public class NGUser implements Serializable {
             ", gardenDescription='" + getGardenDescription() + "'" +
             ", email='" + getEmail() + "'" +
             ", status='" + getStatus() + "'" +
+            ", oneTimeCode='" + getOneTimeCode() + "'" +
+            ", oneTimeExpirationTime='" + getOneTimeExpirationTime() + "'" +
             "}";
     }
 }
