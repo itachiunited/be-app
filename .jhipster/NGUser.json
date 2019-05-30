@@ -33,6 +33,14 @@
             "fieldName": "status",
             "fieldType": "Status",
             "fieldValues": "INVITED,CONFIRMED,DENIED"
+        },
+        {
+            "fieldName": "oneTimeCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "oneTimeExpirationTime",
+            "fieldType": "ZonedDateTime"
         }
     ],
     "relationships": [
