@@ -20,13 +20,10 @@ import org.springframework.validation.Validator;
 
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
-import static com.neighborhood.beapp.web.rest.TestUtil.sameInstant;
 import static com.neighborhood.beapp.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -67,8 +64,8 @@ public class NGUserResourceIT {
     private static final String DEFAULT_ONE_TIME_CODE = "AAAAAAAAAA";
     private static final String UPDATED_ONE_TIME_CODE = "BBBBBBBBBB";
 
-    private static final ZonedDateTime DEFAULT_ONE_TIME_EXPIRATION_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_ONE_TIME_EXPIRATION_TIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Instant DEFAULT_ONE_TIME_EXPIRATION_TIME = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_ONE_TIME_EXPIRATION_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     @Autowired
     private NGUserRepository nGUserRepository;
@@ -239,7 +236,7 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].oneTimeCode").value(hasItem(DEFAULT_ONE_TIME_CODE.toString())))
-            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME))));
+            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(DEFAULT_ONE_TIME_EXPIRATION_TIME.toString())));
     }
     
     @Test
@@ -260,7 +257,7 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.oneTimeCode").value(DEFAULT_ONE_TIME_CODE.toString()))
-            .andExpect(jsonPath("$.oneTimeExpirationTime").value(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME)));
+            .andExpect(jsonPath("$.oneTimeExpirationTime").value(DEFAULT_ONE_TIME_EXPIRATION_TIME.toString()));
     }
 
     @Test
@@ -372,7 +369,7 @@ public class NGUserResourceIT {
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].oneTimeCode").value(hasItem(DEFAULT_ONE_TIME_CODE)))
-            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(sameInstant(DEFAULT_ONE_TIME_EXPIRATION_TIME))));
+            .andExpect(jsonPath("$.[*].oneTimeExpirationTime").value(hasItem(DEFAULT_ONE_TIME_EXPIRATION_TIME.toString())));
     }
 
     @Test

@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -58,7 +58,7 @@ public class NGUser implements Serializable {
     private String oneTimeCode;
 
     @Field("one_time_expiration_time")
-    private ZonedDateTime oneTimeExpirationTime;
+    private Instant oneTimeExpirationTime;
 
     @DBRef
     @Field("location")
@@ -189,16 +189,16 @@ public class NGUser implements Serializable {
         this.oneTimeCode = oneTimeCode;
     }
 
-    public ZonedDateTime getOneTimeExpirationTime() {
+    public Instant getOneTimeExpirationTime() {
         return oneTimeExpirationTime;
     }
 
-    public NGUser oneTimeExpirationTime(ZonedDateTime oneTimeExpirationTime) {
+    public NGUser oneTimeExpirationTime(Instant oneTimeExpirationTime) {
         this.oneTimeExpirationTime = oneTimeExpirationTime;
         return this;
     }
 
-    public void setOneTimeExpirationTime(ZonedDateTime oneTimeExpirationTime) {
+    public void setOneTimeExpirationTime(Instant oneTimeExpirationTime) {
         this.oneTimeExpirationTime = oneTimeExpirationTime;
     }
 

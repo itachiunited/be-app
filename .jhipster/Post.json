@@ -35,11 +35,11 @@
         },
         {
             "fieldName": "startTime",
-            "fieldType": "ZonedDateTime"
+            "fieldType": "Instant"
         },
         {
             "fieldName": "endTime",
-            "fieldType": "ZonedDateTime"
+            "fieldType": "Instant"
         }
     ],
     "relationships": [

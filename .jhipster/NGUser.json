@@ -40,7 +40,7 @@
         },
         {
             "fieldName": "oneTimeExpirationTime",
-            "fieldType": "ZonedDateTime"
+            "fieldType": "Instant"
         }
     ],
     "relationships": [
