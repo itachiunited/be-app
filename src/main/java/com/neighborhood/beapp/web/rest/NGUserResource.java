@@ -1,6 +1,9 @@
 package com.neighborhood.beapp.web.rest;
 
+import com.neighborhood.beapp.domain.DeviceDetails;
 import com.neighborhood.beapp.domain.NGUser;
+import com.neighborhood.beapp.domain.enumeration.Status;
+import com.neighborhood.beapp.repository.DeviceDetailsRepository;
 import com.neighborhood.beapp.repository.NGUserRepository;
 import com.neighborhood.beapp.repository.search.NGUserSearchRepository;
 import com.neighborhood.beapp.web.rest.errors.BadRequestAlertException;
@@ -17,8 +20,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -42,9 +45,12 @@ public class NGUserResource {
 
     private final NGUserSearchRepository nGUserSearchRepository;
 
-    public NGUserResource(NGUserRepository nGUserRepository, NGUserSearchRepository nGUserSearchRepository) {
+    private final DeviceDetailsRepository deviceDetailsRepository;
+
+    public NGUserResource(NGUserRepository nGUserRepository, NGUserSearchRepository nGUserSearchRepository, DeviceDetailsRepository deviceDetailsRepository) {
         this.nGUserRepository = nGUserRepository;
         this.nGUserSearchRepository = nGUserSearchRepository;
+        this.deviceDetailsRepository = deviceDetailsRepository;
     }
 
     /**
@@ -61,6 +67,89 @@ public class NGUserResource {
             throw new BadRequestAlertException("A new nGUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         NGUser result = nGUserRepository.save(nGUser);
+        nGUserSearchRepository.save(result);
+        return ResponseEntity.created(new URI("/api/ng-users/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code POST  /ng-users} : Create a new nGUser.
+     *
+     * @param nGUser the nGUser to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new nGUser, or with status {@code 400 (Bad Request)} if the nGUser has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/ng-users-phonenumber-capture")
+    public ResponseEntity<NGUser> createNGUserWithPhoneNumber(@Valid @RequestBody NGUser nGUser) throws URISyntaxException {
+        log.debug("REST request to save NGUser : {}", nGUser);
+        if (nGUser.getId() != null) {
+            throw new BadRequestAlertException("A new nGUser cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
+        Random rnd = new Random();
+        int oneTimeCode = 100000 + rnd.nextInt(900000);
+        System.out.println("OTC --> "+oneTimeCode);
+        Calendar otcExpiration = Calendar.getInstance();
+        otcExpiration.add(Calendar.MINUTE, 30);
+
+        nGUser.setOneTimeCode(String.valueOf(oneTimeCode));
+        nGUser.setOneTimeExpirationTime(otcExpiration.toInstant());
+
+        nGUser.setStatus(Status.INVITED);
+
+        NGUser result = nGUserRepository.save(nGUser);
+        nGUserSearchRepository.save(result);
+        return ResponseEntity.created(new URI("/api/ng-users/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @PostMapping("/ng-users-verify-token")
+    public ResponseEntity<NGUser> createNGUserVerifyToken(@Valid @RequestBody Map nGUser) throws URISyntaxException {
+        log.debug("REST request to save NGUser : {}", nGUser);
+
+        // Change this to session
+        if (nGUser.get("id") == null) {
+            throw new BadRequestAlertException("Request Needs to Have an ID", ENTITY_NAME, "idnotpresent");
+        }
+
+        NGUser ngUserFromRep = nGUserRepository.findUserById((String)nGUser.get("id"));
+        // Check User Status
+        if(!Status.INVITED.equals(ngUserFromRep.getStatus()))
+        {
+            throw new BadRequestAlertException("User Already Confirmed",ENTITY_NAME,"alreadyConfirmed");
+            // Redirect to Dashboard
+        }
+        // Compare OTC Code & TimeStamp
+
+        Instant currentTime = Instant.now();
+        if(currentTime.isAfter(ngUserFromRep.getOneTimeExpirationTime()))
+        {
+            throw new BadRequestAlertException("Code Expired. Please request for another code",ENTITY_NAME,"codeExpired");
+        }
+
+        if(null!=nGUser.get("oneTimeCode") && ((String)nGUser.get("oneTimeCode")).equalsIgnoreCase(ngUserFromRep.getOneTimeCode()))
+        {
+            System.out.println("Valid Code. Customer Authenticated");
+
+            DeviceDetails deviceDetails = new DeviceDetails();
+            deviceDetails.setDeviceId("testWindows");
+//            deviceDetails.setNGUser(ngUserFromRep);
+            DeviceDetails deviceDetailsFromRep = deviceDetailsRepository.save(deviceDetails);
+
+            Set<DeviceDetails> devices = new HashSet<>();
+            devices.add(deviceDetailsFromRep);
+
+            ngUserFromRep.setDevices(devices);
+
+            ngUserFromRep.setStatus(Status.CONFIRMED);
+        }
+        else
+        {
+            throw new BadRequestAlertException("Code Mismatch. Please reenter the code",ENTITY_NAME,"codeMisMatch");
+        }
+        NGUser result = nGUserRepository.save(ngUserFromRep);
         nGUserSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/ng-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))

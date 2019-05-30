@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NGUserRepository extends MongoRepository<NGUser, String> {
 
+    public NGUser findUserById(String id);
+
 }

@@ -2,10 +2,12 @@ package com.neighborhood.beapp.web.rest;
 
 import com.neighborhood.beapp.BeApp;
 import com.neighborhood.beapp.domain.NGUser;
+import com.neighborhood.beapp.repository.DeviceDetailsRepository;
 import com.neighborhood.beapp.repository.NGUserRepository;
 import com.neighborhood.beapp.repository.search.NGUserSearchRepository;
 import com.neighborhood.beapp.web.rest.errors.ExceptionTranslator;
 
+import com.netflix.discovery.converters.Auto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -70,6 +72,9 @@ public class NGUserResourceIT {
     @Autowired
     private NGUserRepository nGUserRepository;
 
+    @Autowired
+    private DeviceDetailsRepository deviceDetailsRepository;
+
     /**
      * This repository is mocked in the com.neighborhood.beapp.repository.search test package.
      *
@@ -97,7 +102,7 @@ public class NGUserResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final NGUserResource nGUserResource = new NGUserResource(nGUserRepository, mockNGUserSearchRepository);
+        final NGUserResource nGUserResource = new NGUserResource(nGUserRepository, mockNGUserSearchRepository, deviceDetailsRepository);
         this.restNGUserMockMvc = MockMvcBuilders.standaloneSetup(nGUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
