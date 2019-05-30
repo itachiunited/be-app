@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -53,10 +53,10 @@ public class Post implements Serializable {
     private String moreInfo;
 
     @Field("start_time")
-    private ZonedDateTime startTime;
+    private Instant startTime;
 
     @Field("end_time")
-    private ZonedDateTime endTime;
+    private Instant endTime;
 
     @DBRef
     @Field("nGUser")
@@ -180,29 +180,29 @@ public class Post implements Serializable {
         this.moreInfo = moreInfo;
     }
 
-    public ZonedDateTime getStartTime() {
+    public Instant getStartTime() {
         return startTime;
     }
 
-    public Post startTime(ZonedDateTime startTime) {
+    public Post startTime(Instant startTime) {
         this.startTime = startTime;
         return this;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
+    public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
-    public ZonedDateTime getEndTime() {
+    public Instant getEndTime() {
         return endTime;
     }
 
-    public Post endTime(ZonedDateTime endTime) {
+    public Post endTime(Instant endTime) {
         this.endTime = endTime;
         return this;
     }
 
-    public void setEndTime(ZonedDateTime endTime) {
+    public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
 

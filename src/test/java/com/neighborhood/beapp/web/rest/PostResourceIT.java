@@ -20,13 +20,10 @@ import org.springframework.validation.Validator;
 
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
-import static com.neighborhood.beapp.web.rest.TestUtil.sameInstant;
 import static com.neighborhood.beapp.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -65,11 +62,11 @@ public class PostResourceIT {
     private static final String DEFAULT_MORE_INFO = "AAAAAAAAAA";
     private static final String UPDATED_MORE_INFO = "BBBBBBBBBB";
 
-    private static final ZonedDateTime DEFAULT_START_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_START_TIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Instant DEFAULT_START_TIME = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_START_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
-    private static final ZonedDateTime DEFAULT_END_TIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_END_TIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Instant DEFAULT_END_TIME = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_END_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     @Autowired
     private PostRepository postRepository;
@@ -226,8 +223,8 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].remainingQty").value(hasItem(DEFAULT_REMAINING_QTY)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].moreInfo").value(hasItem(DEFAULT_MORE_INFO.toString())))
-            .andExpect(jsonPath("$.[*].startTime").value(hasItem(sameInstant(DEFAULT_START_TIME))))
-            .andExpect(jsonPath("$.[*].endTime").value(hasItem(sameInstant(DEFAULT_END_TIME))));
+            .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
+            .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())));
     }
     
     @Test
@@ -248,8 +245,8 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.remainingQty").value(DEFAULT_REMAINING_QTY))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.moreInfo").value(DEFAULT_MORE_INFO.toString()))
-            .andExpect(jsonPath("$.startTime").value(sameInstant(DEFAULT_START_TIME)))
-            .andExpect(jsonPath("$.endTime").value(sameInstant(DEFAULT_END_TIME)));
+            .andExpect(jsonPath("$.startTime").value(DEFAULT_START_TIME.toString()))
+            .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()));
     }
 
     @Test
@@ -363,8 +360,8 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].remainingQty").value(hasItem(DEFAULT_REMAINING_QTY)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].moreInfo").value(hasItem(DEFAULT_MORE_INFO)))
-            .andExpect(jsonPath("$.[*].startTime").value(hasItem(sameInstant(DEFAULT_START_TIME))))
-            .andExpect(jsonPath("$.[*].endTime").value(hasItem(sameInstant(DEFAULT_END_TIME))));
+            .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
+            .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())));
     }
 
     @Test

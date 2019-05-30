@@ -8,7 +8,7 @@ entity NGUser {
     email String,
     status Status,
     oneTimeCode String,
-    oneTimeExpirationTime ZonedDateTime
+    oneTimeExpirationTime Instant
 }
 
 enum Status {
@@ -74,6 +74,6 @@ entity Post {
     remainingQty Integer,
     description String,
     moreInfo String,
-    startTime ZonedDateTime,
-    endTime ZonedDateTime
+    startTime Instant,
+    endTime Instant
 }
