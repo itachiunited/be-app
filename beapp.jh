@@ -1,0 +1,79 @@
+entity NGUser {
+	id String required,
+    phoneNumber String required,
+    firstName String,
+    lastName String,
+    vegetationType VegetationType,
+    gardenDescription String,
+    email String,
+    status Status,
+    oneTimeCode String,
+    oneTimeExpirationTime Instant
+}
+
+enum Status {
+	INVITED, CONFIRMED, DENIED
+}
+
+relationship OneToOne {
+	NGUser{location} to Location
+}
+
+relationship OneToMany {
+	NGUser{devices} to DeviceDetails
+}
+
+relationship OneToMany {
+	NGUser{gardenImage} to Images
+}
+
+relationship OneToMany {
+	Post{images} to Images
+}
+
+relationship OneToMany {
+	NGUser{posts} to Post
+}
+
+entity Location {
+	id String required,
+    addressLine1 String required,
+    addressLine2 String,
+    city String required,
+    state String required,
+    zip String required,
+    latitude String required,
+    longitue String required
+}
+
+entity Images {
+	id String required,
+    imageURL String required,
+    imageType ImageType required
+}
+
+enum ImageType {
+	POST, PRODUCT, GARDEN
+}
+
+entity DeviceDetails {
+	deviceId String required
+}
+
+enum VegetationType {
+	ORGANIC, NONORGANIC, BOTH
+}
+
+entity Post {
+	id String required,
+    title String,
+    price Float,
+    msrp Float,
+    weight Float,
+    availableQty Integer,
+    remainingQty Integer,
+    description String,
+    moreInfo String,
+    startTime Instant,
+    endTime Instant
+}
